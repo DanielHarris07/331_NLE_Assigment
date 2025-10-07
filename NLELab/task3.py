@@ -16,7 +16,7 @@ def gx(x):
 roots = {}
 
 n = 200                     # resolution (2*n+1 by 2*n+1 grid of sample points)
-beta = 0                    # damping factor
+beta = 5                    # damping factor
 extent=[-1,1,-1,1]  # format: [real_min,real_max,imag_min,imag_max]
 
 complete = numpy.zeros((2*n+1,2*n+1))

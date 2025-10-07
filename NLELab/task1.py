@@ -28,3 +28,5 @@ reset()
 x,iter,exit_flag = combined(f1,g1,0,2,100,0.0001)
 print(f'Combined    {x[-1]: 1.8f}  {f1(x[-1]): 1.4e}  {iter:10d}  {core.f_eval-1:10d}  {core.g_eval:11d}  {exit_flag}')
 print('')
+
+

@@ -16,5 +16,8 @@ def jacobian(f, x, h, n):
     J = np.zeros((n,n))
     for j in range(n):
         # complete code (the answers have three lines of code here)
+        step = np.zeros((n))
+        step[j] = h
+        J[:, j] = (f(x + step) - f(x - step)) / (2*h)
     
     return J

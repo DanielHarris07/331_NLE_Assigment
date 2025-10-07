@@ -24,7 +24,7 @@ def bisection(f, xl, xr, max_iter, tol):
     if abs(fxl)<=tol:
         return x,0,ExitFlag.Converged
 
-    x = [x,xr]
+    x = [xl, xr]
     fxr = f(xr)
     
     # check the right side of interval for convergence / check that the l/r function values have different signs.
@@ -78,7 +78,7 @@ def secant(f, x0, x1, max_iter, tol):
     if abs(fx0)<=tol:
         return x,0,ExitFlag.Converged
 
-    x = [x,x1]
+    x = [x0,x1]
     fx1 = f(x1)
     
     # check the right side of interval for convergence / check that the l/r function values have different signs.
@@ -133,7 +133,7 @@ def regula_falsi(f, xl, xr, max_iter, tol):
     if abs(fxl)<=tol:
         return x,0,ExitFlag.Converged
 
-    x = [x,xr]
+    x = [xl,xr]
     
     fxr = f(xr)
     
@@ -237,7 +237,7 @@ def combined(f, g, xl, xr, max_iter, tol):
     if abs(fxl)<=tol:
         return x,0,ExitFlag.Converged
     
-    x = [x,xr]
+    x = [xl,xr]
     
     fxr = f(xr)
     
@@ -282,3 +282,52 @@ def combined(f, g, xl, xr, max_iter, tol):
             xr = x_int
             fxr = fx_int
 
+
+def newton_damped(f, g, x0, max_iter, tol, beta):
+    '''
+    Nonlinear equation root finding by Newton's method with damping.
+
+    Inputs:
+        f        : nonlinear function
+        g        : nonlinear function derivative (gradient)
+        x0       : initial root estimate
+        max_iter : maximum number of iterations performed
+        tol      : numerical tolerance used to check for root
+        beta     : damping factor
+
+    Outputs:
+        x        : one-dimensional array containing estimates of root
+        i        : number of iterations (number of times a new point is attempted to be estimated)
+        e        : ExitFlag (enumeration)
+    '''
+    x=[x0]
+    fx0=f(x0)
+    
+    # check initial guess for convergence
+    if abs(fx0)<=tol:
+        return x,0,ExitFlag.Converged
+    
+    i = 0
+    while True:
+        i += 1
+        
+        # compute gradient, check gradient is not zero
+        gx0 = g(x0)
+        if gx0 == 0:
+            return x, i, ExitFlag.DivideByZero
+        
+        # calculate new intercept point
+        x1 = -(fx0 / gx0) + x0
+
+        # calculate damping factor
+        damping = 1 / (1 + beta*np.abs(x1 - x0))
+
+        x0 = x0 + (x1-x0)*damping 
+        x.append(x0)
+        fx0 = f(x0)
+
+        # check for converged/max_iter
+        if abs(fx0)<=tol: 
+            return x,i,ExitFlag.Converged
+        elif i == max_iter:
+            return x,i,ExitFlag.MaxIterations
