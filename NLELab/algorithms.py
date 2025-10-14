@@ -236,37 +236,24 @@ def combined(f, g, xl, xr, max_iter, tol):
     # check LHS for convergence
     if abs(fxl)<=tol:
         return x,0,ExitFlag.Converged
-    
-    x = [xl,xr]
-    
-    fxr = f(xr)
-    
-    # check the RHS of interval for convergence / check that the l/r function values have different signs.
-    if abs(fxr)<=tol:
-        return x,0,ExitFlag.Converged
-    elif fxl*fxr>0:
-        return x,0,ExitFlag.NoRoot
-    
+    x_last = xl
+    fx_last = fxl
     i = 0
     while True:
         i += 1
         
         # compute gradient, check gradient is not zero
-        gxl = g(xl)
-        if gxl == 0:
+
+        gx_last = g(x_last)
+        if gx_last == 0:
             return x, i, ExitFlag.DivideByZero
         
         # calculate new intercept point and check if outside [xl, xr]
-        x_int = -(fxl / gxl) + xl
-        if (x_int < xl) or (x_int > xr):
-            # use bisection instead this iteration
+        x_int = -(fx_last / gx_last) + x_last
+        if (x_int < xl) or (x_int > xr): # use bisection instead this iteration if Newton fails
             x_int = (xl + xr) / 2
-            fx_int=f(x_int)
-            x.append(x_int)
-        else:
-            # otherwise stick with Netwon estimate
-            x.append(x_int)
-            fx_int = f(x_int)
+        x.append(x_int)
+        fx_int = f(x_int)
 
         # check for converged/max_iter
         if abs(fx_int)<=tol:
@@ -278,9 +265,13 @@ def combined(f, g, xl, xr, max_iter, tol):
         if fxl*fx_int > 0:
             xl = x_int
             fxl = fx_int
+            fx_last = fxl
+            x_last = xl
         else:
             xr = x_int
             fxr = fx_int
+            fx_last = fxr
+            x_last = xr
 
 
 def newton_damped(f, g, x0, max_iter, tol, beta):

@@ -14,7 +14,7 @@ x0_p = []                 # declare initial root estimate dictionary
 x0_p.append([-1.0,3.0])   # initial root estimate - point 1
 x0_p.append([2.0,3.0])    # initial root estimate - point 2
 x0_p.append([2.0,0.0])    # initial root estimate - point 3
-func = f6
+func = f7
 
 num_points=len(x0_p)
 
@@ -39,7 +39,7 @@ for i in range(num_points):
     for kk in k[i]:
         f_temp=func(xn_p[i][kk])
         for j in range(n):
-            fval[i][j][kk]=f_temp[j]
+            fval[i][j][kk]=np.log(np.abs(f_temp[j]))
 
 fig, ax = plt.subplots(nrows=2,ncols=1)
 for i in range(num_points):
