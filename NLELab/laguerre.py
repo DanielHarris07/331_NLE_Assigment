@@ -18,7 +18,6 @@ def laguerre(c, max_iter, tol):
 
     print('it    re(x)          im(x)       |p(x)|   |p\'(x)|  |p\'\'(x)|    |step|')
     # -----12-(123456789,-123456789)-123456789-123456789.-123456789..-123456789--
-
     success = False
     for it in range(max_iter):
         # Evaluate the polynomial
@@ -40,11 +39,21 @@ def laguerre(c, max_iter, tol):
         ## Your code goes here
 
         # find alpha
-
+        G = dp / p
+        H = G**2 - ddp/p
+        radicand = np.emath.sqrt((n-1)*(n*H-G**2))
+        denom_plus = G + radicand
+        denom_minus = G - radicand
+        denom = denom_plus if abs(denom_plus) > abs(denom_minus) else denom_minus
         # divide-by-zero is possible, if it encounters this then choose a random (complex) point from which to start the next iteration
-        
+        if denom == 0:
+            x = complex(random.random(), random.random())
+            break     
+        else:
+            alpha = n / denom
+
         # compute the new root estimate
-    
         print(output+f' {abs(alpha):9.3f}')
+        x = x - alpha
 
     return x, success
